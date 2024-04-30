@@ -107,6 +107,7 @@ bool vehicle_moving = false;
 bool is_op_active = false;
 int lkas_torq = 1024;
 int steer_type = 3;
+int steer_control_type = 0;
 
 bool is_oplong_enabled = false;
 int acc_set_speed_kph = 255;

@@ -201,6 +201,17 @@ int default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     is_op_active = (GET_BYTE(to_push, 0) >> 4) & 0x1;
     lkas_torq = ((GET_BYTE(to_push, 0) & 0x7) << 8) | GET_BYTE(to_push, 1);
     counter_658 += 1;
+
+    if (GET_BYTE(to_push, 0) & 0x1) {
+      steer_control_type = 1;
+
+      // note - steering wheel will need few seconds to adjust the torque
+      if (GET_BYTE(to_push, 0) & 0x2) {
+        steer_type = 1;
+      } else {
+        steer_type = 3;
+      }
+    }
   }
 
   if ((addr == 284) && (bus_num == 0)) {
@@ -252,17 +263,7 @@ int default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     acc_torq = (GET_BYTE(to_push, 4) & 0x7F) << 8 | GET_BYTE(to_push, 5);
   }
 
-  if ((addr == 499) && (bus_num == 0)) {
-    steer_control_type = 1;
-    // note - steering wheel will need few seconds to adjust the torque
-    if (GET_BYTE(to_push, 2) >> 4 & 0x1) {
-      steer_type = 1;
-    } else {
-      steer_type = 3;
-    }
-  }
-
-  if ((steer_control_type == 0) && (addr == 500) && (bus_num == 0)) {
+  if ((addr == 500) && (bus_num == 0) && (steer_control_type == 0)) {
     // is acc ready? (pushing acc button)
     // note - steering wheel will need few seconds to adjust the torque
     if (GET_BYTE(to_push, 2) >> 4 & 0x1) {

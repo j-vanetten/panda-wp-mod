@@ -202,9 +202,8 @@ int default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     lkas_torq = ((GET_BYTE(to_push, 0) & 0x7) << 8) | GET_BYTE(to_push, 1);
     counter_658 += 1;
 
-    if (GET_BYTE(to_push, 0) >> 7 & 0x1) {
-      steer_control_type = 1;
-
+    steer_control_type = (GET_BYTE(to_push, 0) >> 7 & 0x1);
+    if (steer_control_type == 1) {
       // note - steering wheel will need few seconds to adjust the torque
       if (GET_BYTE(to_push, 0) >> 6 & 0x1) {
         steer_type = 1;
